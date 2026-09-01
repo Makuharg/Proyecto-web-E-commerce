@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tienda — E-commerce</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Todos los links declarados desde el dia 1, aunque el archivo este vacio.
+       El orden define la cascada: NO reordenar. -->
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/catalog.css">
+  <link rel="stylesheet" href="css/modal.css">
+  <link rel="stylesheet" href="css/search.css">
+  <link rel="stylesheet" href="css/cart.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+
+  <a class="skip-link" href="#product-grid">Ir al catalogo</a>
+
+  <header class="site-header">
+    <div class="header-bar">
+      <a href="#" class="logo">Tienda</a>
+
+      <!-- A: buscador -->
+      <div id="search-container" class="header-search"></div>
+
+      <!-- B: icono de carrito + badge -->
+      <button id="cart-toggle" class="cart-toggle" aria-label="Abrir carrito" aria-expanded="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M4 5h2l2.2 9.4a1 1 0 0 0 1 .8h7.9a1 1 0 0 0 1-.77L20 8H7"
+                fill="none" stroke="currentColor" stroke-width="1.7"
+                stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="10" cy="19" r="1.4" fill="currentColor"/>
+          <circle cx="17" cy="19" r="1.4" fill="currentColor"/>
+        </svg>
+        <span id="cart-badge" class="cart-badge" hidden>0</span>
+      </button>
+    </div>
+
+    <!-- A: categorias -->
+    <nav class="category-bar" aria-label="Categorias">
+      <ul id="category-nav" class="category-nav"></ul>
+    </nav>
+  </header>
+
+  <main class="site-main">
+    <!-- A: grilla de cards -->
+    <section id="product-grid" class="product-grid" aria-live="polite" aria-busy="true"></section>
+
+    <!-- A: estados de carga y vacio -->
+    <div id="loader" class="loader" hidden>Cargando productos</div>
+    <div id="empty-state" class="empty-state" hidden></div>
+  </main>
+
+  <!-- A: modal de detalle -->
+  <div id="product-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden></div>
+
+  <!-- B: sidebar del carrito -->
+  <aside id="cart-sidebar" class="cart-sidebar" aria-label="Carrito de compras" hidden></aside>
+
+  <div id="overlay" class="overlay" hidden></div>
+
+  <footer class="site-footer">
+    <p>TP Laboratorio de aplicaciones web cliente &middot; 2026</p>
+  </footer>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
