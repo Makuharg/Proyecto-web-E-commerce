@@ -1,52 +1,59 @@
-/* ============================================================
-   cart.js — Integrante B
-   CONTRATO: estas firmas ya estan acordadas. B las implementa,
-   A las importa. Si una firma cambia, se avisa al otro antes.
-
-   Requisitos 4, 6, 7 y 8 del enunciado.
-   ============================================================ */
-
 import { load, save, clear } from './storage.js';
 
 let items = load();
 
-/** Agrega un producto. Si ya esta, suma 1 a la cantidad.
- *  @param {{id:number,title:string,price:number,image:string}} product */
+/** Toda mutación pasa por acá. Un solo lugar que persiste. */
+function commit(next) {
+  items = next;
+  save(items);
+}
+
+/** Producto de la API → item de carrito. Solo lo que el sidebar usa. */
+function toCartItem(product) {
+  return {
+    id: product.id,
+    title: product.title,
+    price: product.price,
+    image: product.image,
+    quantity: 1
+  };
+}
+
 export function addToCart(product) {
-  // TODO(B)
+  const existing = items.find(item => item.id === product.id);
+  if (existing) {
+    commit(items.map(item =>
+      item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+    ));
+    return;
+  }
+  commit([...items, toCartItem(product)]);
 }
 
-/** Quita un producto del carrito por completo. */
 export function removeFromCart(id) {
-  // TODO(B)
+  // filtrar items y pasarlo por commit()
 }
 
-/** Suma 1 a la cantidad. */
 export function increase(id) {
-  // TODO(B)
+  // mismo patrón que el segundo caso de addToCart
 }
 
-/** Resta 1 a la cantidad. No baja de 1. */
 export function decrease(id) {
-  // TODO(B)
+  // igual que increase pero restando, sin bajar de 1
 }
 
-/** Vacia el carrito y limpia localStorage. */
 export function clearCart() {
-  // TODO(B)
+  // vaciar items y limpiar localStorage con clear()
 }
 
-/** Devuelve una copia de los items. */
 export function getItems() {
   return [...items];
 }
 
-/** Total de UNIDADES, no de productos distintos. Para el badge. */
 export function getTotalUnits() {
-  return 0; // TODO(B)
+  // reduce sobre quantity, no items.length
 }
 
-/** Total a pagar. */
 export function getTotalPrice() {
-  return 0; // TODO(B)
+  // reduce sobre price * quantity, redondeado a 2 decimales al final
 }
