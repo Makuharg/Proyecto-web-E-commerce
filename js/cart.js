@@ -30,16 +30,16 @@ export function addToCart(product) {
   commit([...items, toCartItem(product)]);
 }
 
-export function removeFromCart(id) {
-  // filtrar items y pasarlo por commit()
-}
-
 export function increase(id) {
-  // mismo patrón que el segundo caso de addToCart
+  commit(items.map(item =>
+    item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+  ));
 }
 
 export function decrease(id) {
-  // igual que increase pero restando, sin bajar de 1
+  commit(items.map(item =>
+    item.id === id ? { ...item, quantity: Math.max(1, item.quantity - 1) } : item
+  ));
 }
 
 export function clearCart() {
