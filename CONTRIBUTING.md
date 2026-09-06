@@ -35,7 +35,7 @@ Con esto, dos ramas paralelas casi nunca tocan las mismas líneas y los merges s
 │  ├─ layout.css           FASE 0  header, nav, footer, grid
 │  ├─ catalog.css          → A
 │  ├─ modal.css            → A
-│  ├─ search.css           → A
+│  ├─ search.css           → B
 │  └─ cart.css             → B
 └─ js/
    ├─ main.js              FASE 0  orquestador
@@ -44,7 +44,7 @@ Con esto, dos ramas paralelas casi nunca tocan las mismas líneas y los merges s
    ├─ api.js               → A
    ├─ catalog.js           → A
    ├─ modal.js             → A
-   ├─ search.js            → A
+   ├─ search.js            → B
    ├─ categories.js        → A
    ├─ cart.js              → B  estado del carrito
    └─ cart-ui.js           → B  render del sidebar y el badge
@@ -252,36 +252,63 @@ Settings → Collaborators → Add people.
 
 Los números refieren a los requisitos del enunciado.
 
+El reparto está balanceado en **archivos y en cantidad de PRs**, no solo en cantidad de requisitos. La nota es individual y sale de los commits, así que los dos tienen que terminar con un historial parecido en volumen y repartido en el tiempo.
+
 ### Integrante A — Catálogo
 
 | Req | Funcionalidad | Ramas |
 |---|---|---|
 | 1 | Fetch de la API y render de cards | `feat/fetch-products`, `feat/product-grid` |
-| 2, 3 | Modal de detalle, cierre por X y por "agregar al carrito" | `feat/product-modal` |
-| 10 | Buscador con filtro en vivo | `feat/product-search` |
+| 2, 3 | Modal de detalle, cierre por X y por "agregar al carrito" | `feat/product-modal`, `feat/modal-close-actions` |
 | 11 | Navegación por categorías | `feat/category-filter` |
-| — | Loader y estado vacío | `feat/loading-states` |
+| — | Loader y estado vacío del catálogo | `feat/loading-states` |
 
-Archivos: `api.js`, `catalog.js`, `modal.js`, `search.js`, `categories.js`, `catalog.css`, `modal.css`, `search.css`.
+Archivos: `api.js`, `catalog.js`, `modal.js`, `categories.js`, `catalog.css`, `modal.css`.
 
-### Integrante B — Carrito
+### Integrante B — Carrito y buscador
 
 | Req | Funcionalidad | Ramas |
 |---|---|---|
-| 4 | Agregar al carrito + persistencia en localStorage | `feat/add-to-cart` |
+| 4 | Agregar al carrito + persistencia en localStorage | `feat/cart-state`, `feat/add-to-cart` |
 | 5 | Ícono en la nav y badge con unidades totales | `feat/cart-badge` |
 | 6 | Sidebar con imagen, título, −, cantidad, +, eliminar, subtotal | `feat/cart-sidebar`, `feat/quantity-controls` |
+| 10 | Buscador con filtro en vivo | `feat/product-search` |
 | 7 | Botón finalizar compra | `feat/checkout-flow` |
 | 8 | Botón vaciar carrito | `feat/clear-cart` |
 | 9 | Botones deshabilitados con carrito vacío | `feat/empty-cart-state` |
 
-Archivos: `cart.js`, `cart-ui.js`, `cart.css`.
+Archivos: `cart.js`, `cart-ui.js`, `search.js`, `cart.css`, `search.css`.
+
+> **Por qué el buscador va con el carrito.** El carrito es una sola funcionalidad grande concentrada en `cart-ui.js`; el catálogo son cuatro funcionalidades que se parten solas en ramas chicas. Sin este ajuste, B trabaja lo mismo pero muestra la mitad de commits. `search.js` no toca ningún archivo de A: filtra el array en memoria y llama a `renderProducts()`, que ya está en el contrato.
+
+**B: no hagas el carrito en una sola rama.** Es la trampa más fácil de este reparto. Siete ramas, siete PRs. Una rama de dos semanas es un merge imposible y un solo commit gigante en el historial.
 
 ### Lo compartido
 
-`base.css` y `layout.css` (header, nav, footer, grid, variables de color y tipografía) se hacen **juntos en la fase 0**. Son el punto de conflicto más probable si se dejan para después, y además el enunciado pide consistencia visual en toda la app.
+`base.css` y `layout.css` (header, nav, footer, variables de color y tipografía) se hacen **juntos en la fase 0**. Son el punto de conflicto más probable si se dejan para después, y además el enunciado pide consistencia visual en toda la app.
 
-El responsive lo hace cada uno **dentro de su propio archivo CSS**. Nada de un `responsive.css` común: es garantía de conflicto.
+El commit del esqueleto lo pushea uno solo, pero lo hicieron los dos. Va con co-autoría:
+
+```
+chore: scaffold project structure and module contracts
+
+Co-authored-by: Nombre <mail-de-github@ejemplo.com>
+```
+
+Sin eso, todo el trabajo conjunto queda atribuido a una sola persona.
+
+### Fase de pulido cruzado (últimos días)
+
+Cuando el desarrollo paralelo termina y ya no hay riesgo de pisarse, **cada uno hace el responsive del archivo del otro**:
+
+| Rama | Quién | Qué |
+|---|---|---|
+| `style/responsive-cart` | A | media queries de `cart.css` y `search.css` |
+| `style/responsive-catalog` | B | media queries de `catalog.css` y `modal.css` |
+
+Sirve para dos cosas. Cubre el requisito de responsive sin que quede para la última noche, y hace que los dos tengan commits en las dos mitades del proyecto, así el historial no se lee como "yo hice esta mitad y él la otra".
+
+Es la única excepción a la regla de no tocar archivos ajenos, y solo aplica en esta fase, cuando el otro ya no tiene ramas abiertas sobre ese archivo.
 
 ---
 
@@ -338,23 +365,80 @@ Este es el paso que todos se olvidan y el que arruina el flujo. Si `develop` ava
 git checkout develop
 git pull
 # Abrir PR en GitHub: develop → main
-# Título: "release: catalog, search and category filter"
+# Título: "release: catalog grid and cart state"
 ```
 
-Momentos naturales para hacerlo en este proyecto:
-
-| Release | Qué entra |
-|---|---|
-| 1 | Catálogo listando productos desde la API + carrito agregando a localStorage |
-| 2 | Modal, buscador, categorías, sidebar completo con controles de cantidad |
-| 3 | Finalizar compra, vaciar carrito, estados vacíos |
-| 4 | Responsive terminado, README, entrega |
+Los cuatro releases de este proyecto, con sus fechas, están en la sección 6.
 
 Después de mergear a `main`, no hace falta traer nada de vuelta a `develop`: como `main` no recibe commits propios, `develop` ya lo contiene todo.
 
 ---
 
-## 6. Convención de commits y ramas
+## 6. Cronograma — entrega el 25/09
+
+23 días desde el 2 de septiembre. El calendario está armado para que la app quede **funcionalmente completa el 20/09**, dejando los últimos cinco días para responsive, README y margen de error.
+
+Cada bloque cierra con un release a `main`. Si un bloque se atrasa, se corre todo: no se acumula para el final.
+
+### Bloque 0 — 2 al 4/09 · Fase 0 (juntos)
+
+Esqueleto, `base.css`, `layout.css`, contratos, configuración del repo, nombre de la tienda.
+Cierra con el push a `main` y la creación de `develop`.
+
+### Bloque 1 — 5 al 10/09 · Núcleo funcional → **release 1 el 10/09**
+
+| A | B |
+|---|---|
+| `feat/fetch-products` — traer productos de la API | `feat/cart-state` — lógica de `cart.js` sobre `storage.js` |
+| `feat/product-grid` — render de cards en la grilla | `feat/cart-badge` — badge con unidades totales |
+
+Al cerrar el bloque, la app tiene que listar productos y sumar al carrito desde la consola.
+
+### Bloque 2 — 11 al 16/09 · Interacción → **release 2 el 16/09**
+
+| A | B |
+|---|---|
+| `feat/product-modal` — modal de detalle | `feat/cart-sidebar` — sidebar con los items |
+| `feat/modal-close-actions` — cierre por X y por agregar | `feat/quantity-controls` — −, cantidad, +, eliminar |
+| | `feat/add-to-cart` — conectar el botón del modal |
+
+Acá es donde se cruzan los dos módulos por primera vez. **El PR de `feat/add-to-cart` de B y el del modal de A tienen que mergearse el mismo día**, porque hasta que no están los dos, ninguno puede probar el flujo completo. Coordínenlo.
+
+### Bloque 3 — 17 al 20/09 · Cierre funcional → **release 3 el 20/09**
+
+| A | B |
+|---|---|
+| `feat/category-filter` — navegación por categorías | `feat/product-search` — buscador en vivo |
+| `feat/loading-states` — loader y estado vacío | `feat/checkout-flow` — finalizar compra |
+| | `feat/clear-cart` — vaciar carrito |
+| | `feat/empty-cart-state` — botones deshabilitados |
+
+**El 20/09 los 11 requisitos tienen que funcionar.** Si algo queda afuera, se corta el alcance de lo que sea (menos categorías, buscador más simple) antes que empujar la fecha.
+
+### Bloque 4 — 21 al 23/09 · Pulido cruzado → **release 4 el 23/09**
+
+| A | B |
+|---|---|
+| `style/responsive-cart` | `style/responsive-catalog` |
+| `docs/readme-team-contributions` (a cuatro manos) | |
+
+### 24/09 · Margen
+
+Sin código nuevo. Repasar el checklist de la sección 12, probar en mobile de verdad (no solo el devtools), cerrar ramas sueltas, poner `main` como rama por defecto.
+
+### 25/09 · Entrega
+
+---
+
+### Cadencia mínima
+
+**Dos PRs por semana cada uno, como piso.** El riesgo más grande de este TP no es la dificultad técnica, es que uno de los dos arranque el 20/09. Un historial donde A commiteó tres semanas y B concentró todo en 48 horas se lee solo en la pestaña de commits, y ahí el reparto no salva a nadie.
+
+Si en algún momento uno se atrasa, se dice antes de que sea tarde y se mueve trabajo. Es un TP de dos personas: el que queda esperando pierde nota igual.
+
+---
+
+## 7. Convención de commits y ramas
 
 Todo lo que va al repositorio se escribe en **inglés**: nombres de rama, mensajes de commit, títulos y descripciones de PR, y el código (funciones, variables, clases CSS). Este documento y el README quedan en español porque los lee el instructor.
 
@@ -417,7 +501,7 @@ git config user.email "el-mail-de-tu-cuenta-github@ejemplo.com"
 
 ---
 
-## 7. Pull Requests
+## 8. Pull Requests
 
 Aunque el repo sea de ustedes dos, **todo va por PR**. Es lo que hace visible el criterio de cada uno y es el flujo exacto que van a usar en un trabajo.
 
@@ -448,7 +532,7 @@ Borren la rama después de mergear. GitHub ofrece el botón ahí mismo.
 
 ---
 
-## 8. Las siete reglas que evitan los conflictos
+## 9. Las siete reglas que evitan los conflictos
 
 1. **Nunca commitear directo en `main` ni en `develop`.** Todo por rama y PR.
 2. **Las funcionalidades salen de `develop` y vuelven a `develop`.** A `main` solo llegan los releases.
@@ -460,7 +544,7 @@ Borren la rama después de mergear. GitHub ofrece el botón ahí mismo.
 
 ---
 
-## 9. Si igual aparece un conflicto
+## 10. Si igual aparece un conflicto
 
 No es un desastre, es rutina. Pasa cuando ambos tocaron las mismas líneas.
 
@@ -495,7 +579,7 @@ Si te perdiste y querés empezar de nuevo el merge: `git merge --abort`.
 
 ---
 
-## 10. README final (es requisito de evaluación)
+## 11. README final (es requisito de evaluación)
 
 El enunciado pide: *"El proyecto debe tener un readme donde describa el desarrollo de cada participante adjuntando su username de github"*. Se completa al cierre, en una rama `docs/readme-team-contributions` que sale de `develop` como cualquier otra.
 
@@ -536,7 +620,7 @@ layout de header/nav/footer y grid base.
 
 ---
 
-## 11. Checklist antes de entregar
+## 12. Checklist antes de entregar
 
 **Del flujo de ramas**
 
