@@ -56,9 +56,10 @@ export function getItems() {
 }
 
 export function getTotalUnits() {
-  // reduce sobre quantity, no items.length
+  return items.reduce((total, item) => total + item.quantity, 0);
 }
 
 export function getTotalPrice() {
-  // reduce sobre price * quantity, redondeado a 2 decimales al final
+  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  return Math.round(total * 100) / 100;
 }
