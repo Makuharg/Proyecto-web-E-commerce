@@ -1,52 +1,65 @@
-/* ============================================================
-   cart.js — Integrante B
-   CONTRATO: estas firmas ya estan acordadas. B las implementa,
-   A las importa. Si una firma cambia, se avisa al otro antes.
-
-   Requisitos 4, 6, 7 y 8 del enunciado.
-   ============================================================ */
-
 import { load, save, clear } from './storage.js';
 
 let items = load();
 
-/** Agrega un producto. Si ya esta, suma 1 a la cantidad.
- *  @param {{id:number,title:string,price:number,image:string}} product */
+/** Toda mutación pasa por acá. Un solo lugar que persiste. */
+function commit(next) {
+  items = next;
+  save(items);
+}
+
+/** Producto de la API → item de carrito. Solo lo que el sidebar usa. */
+function toCartItem(product) {
+  return {
+    id: product.id,
+    title: product.title,
+    price: product.price,
+    image: product.image,
+    quantity: 1
+  };
+}
+
 export function addToCart(product) {
-  // TODO(B)
+  const existing = items.find(item => item.id === product.id);
+  if (existing) {
+    commit(items.map(item =>
+      item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+    ));
+    return;
+  }
+  commit([...items, toCartItem(product)]);
 }
 
-/** Quita un producto del carrito por completo. */
-export function removeFromCart(id) {
-  // TODO(B)
-}
-
-/** Suma 1 a la cantidad. */
 export function increase(id) {
-  // TODO(B)
+  commit(items.map(item =>
+    item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+  ));
 }
 
-/** Resta 1 a la cantidad. No baja de 1. */
 export function decrease(id) {
-  // TODO(B)
+  commit(items.map(item =>
+    item.id === id ? { ...item, quantity: Math.max(1, item.quantity - 1) } : item
+  ));
 }
 
-/** Vacia el carrito y limpia localStorage. */
+export function removeFromCart(id) {
+  commit(items.filter(item => item.id !== id));
+}
+
 export function clearCart() {
-  // TODO(B)
+  items = [];
+  clear();
 }
 
-/** Devuelve una copia de los items. */
 export function getItems() {
   return [...items];
 }
 
-/** Total de UNIDADES, no de productos distintos. Para el badge. */
 export function getTotalUnits() {
-  return 0; // TODO(B)
+  return items.reduce((total, item) => total + item.quantity, 0);
 }
 
-/** Total a pagar. */
 export function getTotalPrice() {
-  return 0; // TODO(B)
+  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  return Math.round(total * 100) / 100;
 }
