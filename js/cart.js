@@ -42,8 +42,13 @@ export function decrease(id) {
   ));
 }
 
+export function removeFromCart(id) {
+  commit(items.filter(item => item.id !== id));
+}
+
 export function clearCart() {
-  // vaciar items y limpiar localStorage con clear()
+  items = [];
+  clear();
 }
 
 export function getItems() {
