@@ -6,6 +6,7 @@
    ============================================================ */
 
 import { getProducts } from './api.js';
+import { openModal } from './modal.js';
 
 /** Lista completa en memoria. La usan search.js y categories.js
  *  despues de filtrar; se re-asigna en cada carga. */
@@ -13,6 +14,25 @@ let allProducts = [];
 
 export function initCatalog() {
   loadProducts();
+  bindCardClicks();
+}
+
+/** Delegacion de clicks sobre la grilla: un solo listener,
+ *  sobrevive a los re-renders de search.js y categories.js. */
+function bindCardClicks() {
+  const grid = document.getElementById('product-grid');
+  if (!grid) return;
+  grid.addEventListener('click', (event) => {
+    const card = event.target.closest('.card');
+    if (!card) return;
+    openModal(findProduct(Number(card.dataset.id)));
+  });
+}
+
+/** Busca un producto por id en la lista en memoria.
+ *  Lo usa modal.js cuando una card dispara el click. */
+export function findProduct(id) {
+  return allProducts.find((product) => product.id === id);
 }
 
 async function loadProducts() {
