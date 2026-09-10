@@ -7,18 +7,30 @@
 
 import { getItems, getTotalUnits, getTotalPrice, increase, decrease, removeFromCart } from './cart.js';
 
-let sidebar, badge;
+let toggle, sidebar, badge, overlay;
 
 export function initCartUI() {
-  const toggle = document.getElementById('cart-toggle');
+  toggle = document.getElementById('cart-toggle');
   sidebar = document.getElementById('cart-sidebar');
   badge = document.getElementById('cart-badge');
-  const overlay = document.getElementById('overlay');
-
-  console.log('cart-ui listo', { toggle, sidebar, badge, overlay });
+  overlay = document.getElementById('overlay');
 
   renderCart();
-  // TODO(B): toggle del sidebar, delegación de eventos
+
+  toggle.addEventListener('click', openCart);
+  overlay.addEventListener('click', closeCart);
+
+  sidebar.addEventListener('click', (event) => {
+    const itemEl = event.target.closest('.cart-item');
+    if (!itemEl) return;
+    const id = Number(itemEl.dataset.id);
+
+    if (event.target.matches('.increase')) increase(id);
+    if (event.target.matches('.decrease')) decrease(id);
+    if (event.target.matches('.remove')) removeFromCart(id);
+
+    renderCart();
+  });
 }
 
 function renderCartItem(item) {
@@ -30,7 +42,7 @@ function renderCartItem(item) {
         <span class="cart-item-price">$${item.price}</span>
       </div>
       <div class="cart-item-controls">
-        <button class="decrease" aria-label="Restar unidad">-</button>
+        <button class="decrease" aria-label="Restar unidad" ${item.quantity === 1 ? 'disabled' : ''}>-</button>
         <span class="cart-item-quantity">${item.quantity}</span>
         <button class="increase" aria-label="Sumar unidad">+</button>
       </div>
@@ -58,3 +70,14 @@ function updateBadge() {
   badge.textContent = units;
   badge.hidden = units === 0;
 }
+
+function openCart() {
+  sidebar.hidden = false;
+  overlay.hidden = false;
+}
+
+function closeCart() {
+  sidebar.hidden = true;
+  overlay.hidden = true;
+}
+
