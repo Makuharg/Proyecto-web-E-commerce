@@ -5,12 +5,56 @@
    Requisitos 5, 6, 7, 8 y 9 del enunciado.
    ============================================================ */
 
+import { getItems, getTotalUnits, getTotalPrice, increase, decrease, removeFromCart } from './cart.js';
+
+let sidebar, badge;
+
 export function initCartUI() {
   const toggle = document.getElementById('cart-toggle');
-  const sidebar = document.getElementById('cart-sidebar');
-  const badge = document.getElementById('cart-badge');
+  sidebar = document.getElementById('cart-sidebar');
+  badge = document.getElementById('cart-badge');
   const overlay = document.getElementById('overlay');
 
   console.log('cart-ui listo', { toggle, sidebar, badge, overlay });
-  // TODO(B)
+
+  renderCart();
+  // TODO(B): toggle del sidebar, delegación de eventos
+}
+
+function renderCartItem(item) {
+  return `
+    <div class="cart-item" data-id="${item.id}">
+      <img src="${item.image}" alt="${item.title}">
+      <div class="cart-item-info">
+        <span class="cart-item-title">${item.title}</span>
+        <span class="cart-item-price">$${item.price}</span>
+      </div>
+      <div class="cart-item-controls">
+        <button class="decrease" aria-label="Restar unidad">-</button>
+        <span class="cart-item-quantity">${item.quantity}</span>
+        <button class="increase" aria-label="Sumar unidad">+</button>
+      </div>
+      <span class="cart-item-subtotal">$${(item.price * item.quantity).toFixed(2)}</span>
+      <button class="remove" aria-label="Eliminar producto">×</button>
+    </div>
+  `;
+}
+
+function renderCart() {
+  const items = getItems();
+
+  if (items.length === 0) {
+    sidebar.innerHTML = `<p class="cart-empty">Tu carrito está vacío</p>`;
+  } else {
+    sidebar.innerHTML = items.map(renderCartItem).join('') +
+      `<div class="cart-total">Total: $${getTotalPrice().toFixed(2)}</div>`;
+  }
+
+  updateBadge();
+}
+
+function updateBadge() {
+  const units = getTotalUnits();
+  badge.textContent = units;
+  badge.hidden = units === 0;
 }
