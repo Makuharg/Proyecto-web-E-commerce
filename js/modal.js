@@ -1,10 +1,9 @@
 /* ============================================================
    modal.js — Integrante A
    Modal de detalle (requisito 2). Se abre al clickear una card,
-   renderiza el detalle del producto y se cierra con la X.
-   Requisito 3: el cierre por "agregar al carrito", por overlay
-   y por Escape llega en feat/modal-close-actions y usa
-   addToCart() (ya disponible en cart.js).
+   renderiza el detalle del producto y se cierra con la X,
+   por el boton "agregar al carrito", por click en el backdrop
+   y por Escape (requisito 3). Usa addToCart() de cart.js (B).
    ============================================================ */
 
 import { addToCart } from './cart.js';
@@ -34,10 +33,18 @@ export function openModal(product) {
         <p class="modal__price price">$${Number(product.price).toFixed(2)}</p>
         <p class="modal__description">${escapeHtml(product.description)}</p>
       </div>
+      <div class="modal__actions">
+        <button class="modal__add btn btn-primary" type="button">Agregar al carrito</button>
+      </div>
     </div>
   `;
 
   modal.querySelector('.modal__close').addEventListener('click', closeModal);
+  modal.querySelector('.modal__add').addEventListener('click', () => {
+    addToCart(product);
+    notify('Producto agregado al carrito');
+    closeModal();
+  });
   modal.hidden = false;
   modal.querySelector('.modal__dialog').focus();
 }
