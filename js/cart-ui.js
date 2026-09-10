@@ -19,6 +19,7 @@ export function initCartUI() {
 
   toggle.addEventListener('click', openCart);
   overlay.addEventListener('click', closeCart);
+  document.addEventListener('cart:updated', renderCart);
 
   sidebar.addEventListener('click', (event) => {
     const itemEl = event.target.closest('.cart-item');
@@ -28,8 +29,6 @@ export function initCartUI() {
     if (event.target.matches('.increase')) increase(id);
     if (event.target.matches('.decrease')) decrease(id);
     if (event.target.matches('.remove')) removeFromCart(id);
-
-    renderCart();
   });
 }
 

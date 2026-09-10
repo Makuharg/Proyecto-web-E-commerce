@@ -6,6 +6,7 @@ let items = load();
 function commit(next) {
   items = next;
   save(items);
+  document.dispatchEvent(new CustomEvent('cart:updated'));
 }
 
 /** Producto de la API → item de carrito. Solo lo que el sidebar usa. */
@@ -49,6 +50,7 @@ export function removeFromCart(id) {
 export function clearCart() {
   items = [];
   clear();
+  document.dispatchEvent(new CustomEvent('cart:updated'));
 }
 
 export function getItems() {
