@@ -83,6 +83,16 @@
   color: var(--muted);
 }
 
+.modal__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-4) var(--sp-5) var(--sp-5);
+  border-top: 1px solid var(--line);
+}
+
+.modal__add { width: 100%; }
+
 /* --- Responsive del modal --- */
 @media (max-width: 720px) {
   .modal {
