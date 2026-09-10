@@ -58,6 +58,19 @@ export function closeModal() {
   if (lastFocused) lastFocused.focus();
 }
 
+/* Cierre por click en el backdrop: el listener vive en el contenedor
+   y solo se dispara cuando el click NO ocurre dentro del dialog. */
+const modal = document.getElementById('product-modal');
+modal?.addEventListener('click', (event) => {
+  if (event.target === modal) closeModal();
+});
+
+/* Cierre por tecla Escape mientras el modal este visible. */
+document.addEventListener('keydown', (event) => {
+  if (event.key !== 'Escape') return;
+  if (modal && !modal.hidden) closeModal();
+});
+
 function escapeHtml(value) {
   return String(value)
     .replace(/&/g, '&amp;')
