@@ -12,9 +12,25 @@ import { renderProducts } from './catalog.js';
 let allProducts = [];
 
 export function initCategories() {
+  bindNavClicks();
+
   document.addEventListener('products:loaded', (event) => {
     allProducts = Array.isArray(event.detail?.products) ? event.detail.products : [];
     renderNav(allProducts);
+  });
+}
+
+/** Delegacion sobre la lista: un solo listener, sobrevive re-renders. */
+function bindNavClicks() {
+  const nav = document.getElementById('category-nav');
+  if (!nav) return;
+
+  nav.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-category]');
+    if (!chip) return;
+
+    setActive(chip.dataset.category);
+    filterProducts(chip.dataset.category);
   });
 }
 
@@ -38,6 +54,20 @@ function renderNav(products) {
   ];
 
   nav.innerHTML = chips.join('');
+}
+
+function filterProducts(category) {
+  if (category === 'all') {
+    renderProducts(allProducts);
+    return;
+  }
+  renderProducts(allProducts.filter((product) => product.category === category));
+}
+
+function setActive(activeCategory) {
+  document.querySelectorAll('.category-chip').forEach((chip) => {
+    chip.setAttribute('aria-pressed', String(chip.dataset.category === activeCategory));
+  });
 }
 
 function escapeHtml(value) {
