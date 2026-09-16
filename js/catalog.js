@@ -52,6 +52,12 @@ async function loadProducts() {
     }
 
     renderProducts(allProducts);
+
+    /* Avisa a categories.js y search.js que pueden filtrar.
+       Detalle = lista en memoria, asi no necesitan importarla. */
+    document.dispatchEvent(new CustomEvent('products:loaded', {
+      detail: { products: allProducts }
+    }));
   } catch (err) {
     console.error('No se pudieron cargar los productos', err);
     showEmpty(loader, emptyState, grid);
