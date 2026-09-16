@@ -97,6 +97,17 @@
     box-shadow var(--transition);
 }
 
+/* El check ocupa lugar siempre, asi no reflowa al activarse. */
+.category-chip::before {
+  content: "✓";
+  font-size: 0.85em;
+  font-weight: 700;
+  line-height: 1;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity var(--transition), transform var(--transition);
+}
+
 .category-chip:hover {
   color: var(--ink);
   border-color: var(--ink);
@@ -105,11 +116,19 @@
 
 .category-chip:active { transform: translateY(0); }
 
+/* El outline global es cuadrado; aca lo devolvemos a la forma de pill. */
+.category-chip:focus-visible { border-radius: 999px; }
+
 .category-chip[aria-pressed="true"] {
   color: #fff;
-  background: var(--accent);
-  border-color: var(--accent);
-  box-shadow: 0 2px 10px rgb(31 79 216 / 0.35);
+  background: linear-gradient(180deg, var(--accent), var(--accent-dark));
+  border-color: var(--accent-dark);
+  box-shadow: 0 2px 10px rgb(31 79 216 / 0.35), inset 0 -1px 0 rgb(0 0 0 / 0.12);
+}
+
+.category-chip[aria-pressed="true"]::before {
+  opacity: 1;
+  transform: scale(1);
 }
 
 .category-chip__count {
@@ -125,6 +144,7 @@
   line-height: 1;
   background: var(--accent-soft);
   color: var(--accent-dark);
+  transition: background var(--transition), color var(--transition);
 }
 
 .category-chip[aria-pressed="true"] .category-chip__count {
