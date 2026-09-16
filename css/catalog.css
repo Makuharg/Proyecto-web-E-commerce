@@ -76,7 +76,7 @@
 /* --- Chips de categorias --- */
 /* Banda de fondo suave que separa la fila de filtros del header blanco. */
 .category-bar {
-  background: color-mix(in srgb, var(--accent-soft) 45%, var(--paper));
+  background: color-mix(in srgb, var(--accent-soft) 60%, var(--paper));
 }
 
 .category-nav li + li { margin-left: var(--sp-2); }

@@ -39,6 +39,21 @@ function getCategories(products) {
   return [...new Set(products.map((product) => product.category))].sort();
 }
 
+/** Etiquetas en español para las categorias de fakestoreapi.
+ *  La clave queda intacta en data-category: es lo que usa el filtro. */
+const CATEGORY_LABELS = {
+  "men's clothing": 'Ropa de Hombre',
+  "women's clothing": 'Ropa de Mujer',
+  electronics: 'Electrónica',
+  jewelery: 'Joyería'
+};
+
+function labelFor(category) {
+  const label = CATEGORY_LABELS[category];
+  if (label) return label;
+  return category.charAt(0).toUpperCase() + category.slice(1);
+}
+
 function renderNav(products) {
   const nav = document.getElementById('category-nav');
   if (!nav || products.length === 0) return;
@@ -46,7 +61,7 @@ function renderNav(products) {
   const categories = getCategories(products);
   const chipMarkup = (category, count) => `
         <li><button type="button" class="category-chip" data-category="${escapeAttr(category)}" aria-pressed="${category === 'all'}">
-          <span>${escapeHtml(category === 'all' ? 'Todas las categorías' : category)}</span>
+          <span>${escapeHtml(category === 'all' ? 'Todas las categorías' : labelFor(category))}</span>
           <span class="category-chip__count">${count}</span>
         </button></li>
       `;
