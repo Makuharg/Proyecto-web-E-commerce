@@ -44,16 +44,23 @@ function renderNav(products) {
   if (!nav || products.length === 0) return;
 
   const categories = getCategories(products);
-  const chips = [
-    `<li><button type="button" class="category-chip" data-category="all" aria-pressed="true">Todas las categorias</button></li>`,
-    ...categories.map(
-      (category) => `
-        <li><button type="button" class="category-chip" data-category="${escapeAttr(category)}" aria-pressed="false">${escapeHtml(category)}</button></li>
-      `
-    )
-  ];
+  const chipMarkup = (category, count) => `
+        <li><button type="button" class="category-chip" data-category="${escapeAttr(category)}" aria-pressed="${category === 'all'}">
+          <span>${escapeHtml(category === 'all' ? 'Todas las categorías' : category)}</span>
+          <span class="category-chip__count">${count}</span>
+        </button></li>
+      `;
 
-  nav.innerHTML = chips.join('');
+  const totalChip = chipMarkup('all', products.length);
+  const categoryChips = categories
+    .map((category) => chipMarkup(category, productCount(category, products)))
+    .join('');
+
+  nav.innerHTML = totalChip + categoryChips;
+}
+
+function productCount(category, products) {
+  return products.filter((product) => product.category === category).length;
 }
 
 function filterProducts(category) {
