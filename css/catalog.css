@@ -73,6 +73,92 @@
   font-size: var(--text-lg);
 }
 
+/* --- Chips de categorias --- */
+/* Banda de fondo suave que separa la fila de filtros del header blanco. */
+.category-bar {
+  background: color-mix(in srgb, var(--accent-soft) 60%, var(--paper));
+}
+
+.category-nav li + li { margin-left: var(--sp-2); }
+.category-nav li { padding-block: var(--sp-3); }
+
+.category-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex-shrink: 0;
+  padding: var(--sp-2) var(--sp-4);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--muted);
+  background: var(--surface);
+  transition:
+    transform var(--transition),
+    color var(--transition),
+    border-color var(--transition),
+    background var(--transition),
+    box-shadow var(--transition);
+}
+
+/* El check ocupa lugar siempre, asi no reflowa al activarse. */
+.category-chip::before {
+  content: "✓";
+  font-size: 0.85em;
+  font-weight: 700;
+  line-height: 1;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity var(--transition), transform var(--transition);
+}
+
+.category-chip:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+  transform: translateY(-1px);
+}
+
+.category-chip:active { transform: translateY(0); }
+
+/* El outline global es cuadrado; aca lo devolvemos a la forma de pill. */
+.category-chip:focus-visible { border-radius: 999px; }
+
+.category-chip[aria-pressed="true"] {
+  color: #fff;
+  background: linear-gradient(180deg, var(--accent), var(--accent-dark));
+  border-color: var(--accent-dark);
+  box-shadow: 0 2px 10px rgb(31 79 216 / 0.35), inset 0 -1px 0 rgb(0 0 0 / 0.12);
+}
+
+.category-chip[aria-pressed="true"]::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.category-chip__count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.4em;
+  height: 1.4em;
+  padding-inline: var(--sp-1);
+  border-radius: 999px;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  background: rgb(31 79 216 / 0.16);
+  color: var(--accent-dark);
+  box-shadow: inset 0 0 0 1px rgb(31 79 216 / 0.25);
+  transition: background var(--transition), color var(--transition), box-shadow var(--transition);
+}
+
+.category-chip[aria-pressed="true"] .category-chip__count {
+  background: rgb(255 255 255 / 0.25);
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.25);
+}
+
 /* --- Loader --- */
 .loader {
   grid-column: 1 / -1;
@@ -112,4 +198,6 @@
     gap: var(--sp-3);
   }
   .card__body { padding: var(--sp-3); }
+  .category-nav li { padding-block: var(--sp-2); }
+  .category-chip { padding: var(--sp-1) var(--sp-3); font-size: var(--text-xs); }
 }
