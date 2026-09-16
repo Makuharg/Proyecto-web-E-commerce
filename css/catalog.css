@@ -73,6 +73,29 @@
   font-size: var(--text-lg);
 }
 
+/* --- Chips de categorias --- */
+.category-chip {
+  flex-shrink: 0;
+  padding: var(--sp-2) var(--sp-4);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: var(--text-sm);
+  color: var(--muted);
+  background: var(--surface);
+  transition: color var(--transition), border-color var(--transition), background var(--transition);
+}
+
+.category-chip:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
+.category-chip[aria-pressed="true"] {
+  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
 /* --- Loader --- */
 .loader {
   grid-column: 1 / -1;
@@ -112,4 +135,5 @@
     gap: var(--sp-3);
   }
   .card__body { padding: var(--sp-3); }
+  .category-chip { padding: var(--sp-1) var(--sp-3); font-size: var(--text-xs); }
 }
