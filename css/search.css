@@ -1,5 +1,31 @@
 /* ============================================================
    search.css — Integrante B
-   Input de busqueda del header.
-   Las media queries de este componente van EN ESTE ARCHIVO.
+   Estilos del input de búsqueda.
    ============================================================ */
+
+#search-container {
+  flex: 1;
+  max-width: 320px;
+}
+
+.search-input {
+  width: 100%;
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  font-size: var(--text-sm);
+  background: var(--paper);
+  transition: border-color var(--transition);
+}
+
+.search-input:hover {
+  border-color: var(--muted);
+}
+
+.search-input:focus {
+  border-color: var(--accent);
+}
+
+.search-input::placeholder {
+  color: var(--muted);
+}

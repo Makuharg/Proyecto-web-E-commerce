@@ -1,12 +1,14 @@
 /* ============================================================
    search.js — Integrante B
-   Buscador por título. Filtra la lista en memoria y reusa
-   el render de catalog.js, sin tocar su código.
+   Buscador por título. Se combina con el filtro de categoría
+   de categories.js mediante eventos cruzados.
    ============================================================ */
 
 import { renderProducts } from './catalog.js';
 
 let allProducts = [];
+let currentQuery = '';
+let currentCategory = 'all';
 
 export function initSearch() {
   const container = document.getElementById('search-container');
@@ -24,14 +26,30 @@ export function initSearch() {
     allProducts = event.detail.products;
   });
 
+  document.addEventListener('category:changed', (event) => {
+    currentCategory = event.detail.category;
+    applyFilters();
+  });
+
   const input = document.getElementById('search-input');
   input.addEventListener('input', (event) => {
-    const query = event.target.value.trim().toLowerCase();
-    const filtered = query === ''
-      ? allProducts
-      : allProducts.filter(product =>
-          product.title.toLowerCase().includes(query)
-        );
-    renderProducts(filtered);
+    currentQuery = event.target.value.trim().toLowerCase();
+    document.dispatchEvent(new CustomEvent('search:changed', {
+      detail: { query: currentQuery }
+    }));
+    applyFilters();
   });
+}
+
+function applyFilters() {
+  let filtered = allProducts;
+
+  if (currentCategory !== 'all') {
+    filtered = filtered.filter(product => product.category === currentCategory);
+  }
+  if (currentQuery !== '') {
+    filtered = filtered.filter(product => product.title.toLowerCase().includes(currentQuery));
+  }
+
+  renderProducts(filtered);
 }
