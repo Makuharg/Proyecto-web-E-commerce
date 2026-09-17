@@ -1,15 +1,37 @@
 /* ============================================================
    search.js — Integrante B
-   Buscador que filtra los productos ya cargados en memoria y
-   llama a renderProducts() de catalog.js.
-   No toca ningun archivo de A.
-   Requisito 10 del enunciado.
+   Buscador por título. Filtra la lista en memoria y reusa
+   el render de catalog.js, sin tocar su código.
    ============================================================ */
 
 import { renderProducts } from './catalog.js';
 
-export function initSearch(products) {
+let allProducts = [];
+
+export function initSearch() {
   const container = document.getElementById('search-container');
-  console.log('search listo', container);
-  // TODO(B)
+  container.innerHTML = `
+    <input
+      type="search"
+      id="search-input"
+      class="search-input"
+      placeholder="Buscar productos..."
+      aria-label="Buscar productos"
+    >
+  `;
+
+  document.addEventListener('products:loaded', (event) => {
+    allProducts = event.detail.products;
+  });
+
+  const input = document.getElementById('search-input');
+  input.addEventListener('input', (event) => {
+    const query = event.target.value.trim().toLowerCase();
+    const filtered = query === ''
+      ? allProducts
+      : allProducts.filter(product =>
+          product.title.toLowerCase().includes(query)
+        );
+    renderProducts(filtered);
+  });
 }
