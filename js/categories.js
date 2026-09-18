@@ -1,12 +1,9 @@
 /* ============================================================
    categories.js — Integrante A
    Navegacion por categorias (requisito 11).
-   Filtra la lista que ya cargo catalog.js en memoria y re-render
-   con renderProducts(). No hace un segundo fetch por categoria:
-   es inmediato y consistente con el buscador de search.js.
+   No filtra ni re-renderiza: avisa a search.js con el evento
+   category:changed para que combine búsqueda + categoría.
    ============================================================ */
-
-import { renderProducts } from './catalog.js';
 
 /** Productos completos, los recibe del evento products:loaded. */
 let allProducts = [];
@@ -30,7 +27,10 @@ function bindNavClicks() {
     if (!chip) return;
 
     setActive(chip.dataset.category);
-    filterProducts(chip.dataset.category);
+
+    document.dispatchEvent(new CustomEvent('category:changed', {
+      detail: { category: chip.dataset.category }
+    }));
   });
 }
 
@@ -59,31 +59,18 @@ function renderNav(products) {
   if (!nav || products.length === 0) return;
 
   const categories = getCategories(products);
-  const chipMarkup = (category, count) => `
+  const chipMarkup = (category) => `
         <li><button type="button" class="category-chip" data-category="${escapeAttr(category)}" aria-pressed="${category === 'all'}">
           <span>${escapeHtml(category === 'all' ? 'Todas las categorías' : labelFor(category))}</span>
-          <span class="category-chip__count">${count}</span>
         </button></li>
       `;
 
-  const totalChip = chipMarkup('all', products.length);
+  const totalChip = chipMarkup('all');
   const categoryChips = categories
-    .map((category) => chipMarkup(category, productCount(category, products)))
+    .map((category) => chipMarkup(category))
     .join('');
 
   nav.innerHTML = totalChip + categoryChips;
-}
-
-function productCount(category, products) {
-  return products.filter((product) => product.category === category).length;
-}
-
-function filterProducts(category) {
-  if (category === 'all') {
-    renderProducts(allProducts);
-    return;
-  }
-  renderProducts(allProducts.filter((product) => product.category === category));
 }
 
 function setActive(activeCategory) {

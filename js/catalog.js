@@ -88,12 +88,21 @@ function showEmpty(loader, emptyState, grid) {
 }
 
 /** Dibuja una lista de productos en la grilla. La usan
- *  search.js y categories.js despues de filtrar. */
+ *  catalog.js al cargar y search.js después de filtrar. */
 export function renderProducts(products) {
   const grid = document.getElementById('product-grid');
   if (!grid) return;
 
   const list = Array.isArray(products) ? products : [];
+
+  if (list.length === 0) {
+    showNoResults(grid);
+    return;
+  }
+
+  const emptyState = document.getElementById('empty-state');
+  if (emptyState) emptyState.hidden = true;
+
   grid.innerHTML = list
     .map(
       (product) => `
@@ -108,6 +117,18 @@ export function renderProducts(products) {
       `
     )
     .join('');
+}
+
+/** Cuando ningun producto matchea el filtro activo, avisa en #empty-state. */
+function showNoResults(grid) {
+  const emptyState = document.getElementById('empty-state');
+  if (emptyState) {
+    emptyState.hidden = false;
+    emptyState.innerHTML = `
+      <p>No se encontraron productos. Probá con otra búsqueda o categoría.</p>
+    `;
+  }
+  if (grid) grid.innerHTML = '';
 }
 
 function escapeHtml(value) {
