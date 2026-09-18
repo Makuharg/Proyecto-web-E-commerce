@@ -8,7 +8,9 @@
 import { initCatalog } from './catalog.js';
 import { initCategories } from './categories.js';
 import { initCartUI } from './cart-ui.js';
+import { initSearch } from './search.js';
 
 initCatalog();
 initCategories();
 initCartUI();
+initSearch();
