@@ -154,5 +154,18 @@
   font-weight: 600;
   font-size: var(--text-lg);
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+}
+
+/* --- Botón vaciar carrito --- */
+.clear-cart-btn {
+  width: 100%;
+  margin-top: var(--sp-3);
+  border: 1px solid var(--danger);
+}
+
+.clear-cart-btn:hover:not(:disabled) {
+  background: var(--danger);
+  color: #fff;
+  border-color: var(--danger);
 }

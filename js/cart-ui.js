@@ -62,12 +62,12 @@ function renderCart() {
   if (items.length === 0) {
     sidebar.innerHTML = `
       <p class="cart-empty">Tu carrito está vacío</p>
-      <button class="clear-cart-btn" disabled>Vaciar carrito</button>
+      <button class="clear-cart-btn btn btn-danger" disabled>Vaciar carrito</button>
     `;
   } else {
     sidebar.innerHTML = items.map(renderCartItem).join('') +
       `<div class="cart-total">Total: $${getTotalPrice().toFixed(2)}</div>
-       <button class="clear-cart-btn">Vaciar carrito</button>`;
+      <button class="clear-cart-btn btn btn-danger">Vaciar carrito</button>`;
   }
 
   updateBadge();
