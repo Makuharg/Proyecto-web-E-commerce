@@ -5,7 +5,7 @@
    Requisitos 5, 6, 7, 8 y 9 del enunciado.
    ============================================================ */
 
-import { getItems, getTotalUnits, getTotalPrice, increase, decrease, removeFromCart } from './cart.js';
+import { getItems, getTotalUnits, getTotalPrice, increase, decrease, removeFromCart, clearCart } from './cart.js';
 
 let toggle, sidebar, badge, overlay;
 
@@ -22,6 +22,11 @@ export function initCartUI() {
   document.addEventListener('cart:updated', renderCart);
 
   sidebar.addEventListener('click', (event) => {
+    if (event.target.matches('.clear-cart-btn')) {
+      clearCart();
+      return;
+    }
+
     const itemEl = event.target.closest('.cart-item');
     if (!itemEl) return;
     const id = Number(itemEl.dataset.id);
@@ -55,10 +60,14 @@ function renderCart() {
   const items = getItems();
 
   if (items.length === 0) {
-    sidebar.innerHTML = `<p class="cart-empty">Tu carrito está vacío</p>`;
+    sidebar.innerHTML = `
+      <p class="cart-empty">Tu carrito está vacío</p>
+      <button class="clear-cart-btn btn btn-danger" disabled>Vaciar carrito</button>
+    `;
   } else {
     sidebar.innerHTML = items.map(renderCartItem).join('') +
-      `<div class="cart-total">Total: $${getTotalPrice().toFixed(2)}</div>`;
+      `<div class="cart-total">Total: $${getTotalPrice().toFixed(2)}</div>
+      <button class="clear-cart-btn btn btn-danger">Vaciar carrito</button>`;
   }
 
   updateBadge();
