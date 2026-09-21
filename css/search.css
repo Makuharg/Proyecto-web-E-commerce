@@ -29,3 +29,14 @@
 .search-input::placeholder {
   color: var(--muted);
 }
+
+/* --- Responsive del buscador --- */
+@media (max-width: 720px) {
+  #search-container {
+    min-width: 0;
+  }
+
+  .search-input {
+    padding: var(--sp-2);
+  }
+}
