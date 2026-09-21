@@ -6,6 +6,7 @@
    ============================================================ */
 
 import { getItems, getTotalUnits, getTotalPrice, increase, decrease, removeFromCart, clearCart } from './cart.js';
+import { notify } from './notify.js';
 
 let toggle, sidebar, badge, overlay;
 
@@ -22,6 +23,12 @@ export function initCartUI() {
   document.addEventListener('cart:updated', renderCart);
 
   sidebar.addEventListener('click', (event) => {
+    if (event.target.matches('.checkout-btn')) {
+      notify('¡Compra realizada con éxito!', 'success');
+      clearCart();
+      return;
+    }
+
     if (event.target.matches('.clear-cart-btn')) {
       clearCart();
       return;
@@ -63,11 +70,13 @@ function renderCart() {
     sidebar.innerHTML = `
       <p class="cart-empty">Tu carrito está vacío</p>
       <button class="clear-cart-btn btn btn-danger" disabled>Vaciar carrito</button>
+      <button class="checkout-btn btn btn-primary" disabled>Finalizar compra</button>
     `;
   } else {
     sidebar.innerHTML = items.map(renderCartItem).join('') +
       `<div class="cart-total">Total: $${getTotalPrice().toFixed(2)}</div>
-      <button class="clear-cart-btn btn btn-danger">Vaciar carrito</button>`;
+       <button class="clear-cart-btn btn btn-danger">Vaciar carrito</button>
+       <button class="checkout-btn btn btn-primary">Finalizar compra</button>`;
   }
 
   updateBadge();
