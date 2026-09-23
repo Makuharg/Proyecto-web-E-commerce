@@ -179,6 +179,16 @@
     gap: var(--sp-3);
   }
   .card__body { padding: var(--sp-3); }
+
+  /* NUEVO: contiene el overflow horizontal del nav de categorías */
+  .category-nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+  }
+
   .category-nav li { padding-block: var(--sp-2); }
-  .category-chip { padding: var(--sp-1) var(--sp-3); font-size: var(--text-xs); }
+  .category-nav li + li { margin-left: 0; } /* CAMBIADO: era var(--sp-2), ahora 0 porque el gap del flex ya separa */
+  .category-chip { padding: var(--sp-1) var(--sp-3); font-size: var(--text-xs); white-space: nowrap; } /* CAMBIADO: se agregó white-space: nowrap */
 }

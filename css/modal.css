@@ -97,7 +97,6 @@
 @media (max-width: 720px) {
   .modal {
     padding: var(--sp-3);
-    align-items: flex-end;
   }
   .modal__dialog {
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
