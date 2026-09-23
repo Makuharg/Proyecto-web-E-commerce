@@ -5,11 +5,13 @@
    ============================================================ */
 
 /* El contenedor #product-modal es el backdrop a pantalla completa:
-   esta por encima del header (z 20) y del overlay compartido (z 30). */
+   va por encima del header (z 20), del overlay compartido (z 30)
+   y del overlay + sidebar del carrito (z 90 y 100). Asi el modal
+   nunca queda tapado si se abre el carrito con el detalle abierto. */
 .modal {
   position: fixed;
   inset: 0;
-  z-index: 40;
+  z-index: 110;
   display: flex;
   align-items: center;
   justify-content: center;
