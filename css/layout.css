@@ -44,6 +44,8 @@
   width: 40px;
   height: 40px;
   flex-shrink: 0;
+  /* Empuja el icono al borde derecho de la columna de contenido. */
+  margin-left: auto;
   border-radius: var(--radius);
   color: var(--ink);
   transition: background var(--transition);
@@ -59,6 +61,7 @@
 
 .category-nav {
   display: flex;
+  justify-content: center;
   gap: var(--sp-1);
   max-width: var(--max-width);
   margin-inline: auto;
